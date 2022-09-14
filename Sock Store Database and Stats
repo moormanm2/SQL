@@ -1,0 +1,27 @@
+--Create a store database
+
+CREATE TABLE socks (id INTEGER PRIMARY KEY, name TEXT, stock INTEGER, price INTEGER, sold INTEGER);
+
+INSERT INTO socks VALUES 
+(1, "Pineapple", 125, 7.50, 38), 
+(2, "Monkeys", 200, 8.50, 56),
+(3, "Pickles", 134, 6.50, 43),
+(4, "Leaves", 87, 8.00, 22),
+(5, "Puppy", 289, 8.50, 67),
+(6, "Taco", 300, 8.20, 77),
+(7, "Snails", 223, 8.50, 64),
+(8, "Swirls", 143, 7.50, 55),
+(9, "Mustache", 340, 7.50, 42),
+(10, "Pizzas", 234, 7.75, 52),
+(11, "Cats", 267, 6.20, 58),
+(12, "Peaches", 174, 8.50, 71),
+(13, "Crowns", 273, 8.48, 66),
+(14, "Mountains", 231, 7.25, 42),
+(15, "Pigs", 222, 8.50, 68);
+
+--display database by price
+SELECT * FROM socks
+ORDER BY price;
+
+--what is the sum of socks sold
+SELECT SUM(sold) FROM SOCKS;
