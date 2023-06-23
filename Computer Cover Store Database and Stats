@@ -1,0 +1,25 @@
+#1 First I created a store database.
+CREATE TABLE computer_covers (id integer primary key, design text, size integer, storage_location integer, price integer);
+
+INSERT INTO computer_covers VALUES
+(1, "flowers", 9, 1, 12),
+(2, "dogs", 10, 2, 13),
+(3, "cats", 11, 3, 14),
+(4, "monkeys", 11, 4, 14),
+(5, "trucks", 12, 5, 15),
+(6, "catus", 12, 6, 15),
+(7, "swirls", 12, 7, 15),
+(8, "dots", 13, 8, 16),
+(9, "rainbow", 13, 9, 16),
+(10, "dinosaurs", 13, 10, 16),
+(11, "baseballs", 14, 11, 17),
+(12, "sushi", 14, 12, 17),
+(13, "horses", 15, 13, 18),
+(14, "lightning bolts", 15, 14, 18),
+(15, "mountains", 16, 15, 19);
+
+#2 Then I displayed the database ordered by price.
+SELECT * FROM computer_covers ORDER BY price;
+
+# FInally I found the average price for the computer covers.
+SELECT AVG (price) FROM computer_covers;
