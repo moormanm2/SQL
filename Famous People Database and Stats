@@ -1,0 +1,86 @@
+/* Create table about the people and what they do here */
+CREATE TABLE movie_stars
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age INTEGER);
+    
+INSERT INTO movie_stars (name, age) VALUES 
+    ("Scarlett Johansson", 38),
+    ("Robert Downey, Jr.", 58),
+    ("Samuel L. Jackson", 74),
+    ("Zoe Saldana", 45),
+    ("Chris Pratt", 44),
+    ("Vin Diesel", 55),
+    ("Chris Hemsworth", 39),
+    ("Tom Cruise", 61),
+    ("Chris Evans", 42),
+    ("Bradley Cooper", 48),
+    ("Tom Hanks", 66),
+    ("Johnny Depp", 60),
+    ("Dwayne Johnson", 51),
+    ("Tom Holland", 27),
+    ("Mark Ruffalo", 55);
+
+CREATE TABLE career_details 
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    person_id INTEGER,
+    role TEXT,
+    number_of_film INTEGER);
+
+INSERT INTO career_details (person_id, role, number_of_film) VALUES
+    (1, "Lead Ensemble Member Actress", 18),
+    (2, "Leading Actor", 29),
+    (3, "Supporting Actor", 53),
+    (4, "Leading Actress", 16),
+    (5, "Leading Actor", 12),
+    (6, "Leading Actor", 17),
+    (7, "Leading Actor", 15),
+    (8, "Leading Actor", 38),
+    (9, "Leading Actor", 15),
+    (10, "Leading Actor", 17),
+    (11, "Leading Actor", 48),
+    (12, "Leading Actor", 41),
+    (13, "Leading Actor", 27),
+    (14, "Lead Ensemble Member Actor", 9),
+    (15, "Actor", 50);
+    
+CREATE TABLE best_collaborator
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    person1_id INTEGER,
+    person2_id INTEGER);
+    
+INSERT INTO best_collaborator (person1_id, person2_id) VALUES
+    (1, 2),
+    (2, 1),
+    (4, 5),
+    (5, 4),
+    (6, 5),
+    (7, 2),
+    (9, 2),
+    (9, 1),
+    (9, 7),
+    (15, 2),
+    (15, 1),
+    (15, 9),
+    (15, 7);
+
+1. (Self-join) Here I created a table to see what each movie stars main role is in movies.
+SELECT movie_stars.name, career_details.role     FROM movie_stars
+    JOIN career_details
+    ON movie_stars.id = career_details.person_id;
+
+2. (Combinging JOINs) This created a table that showed me the movie stars that collaborate best with the other movie stars in my "movie_stars" table.
+SELECT a.name, b.name FROM best_collaborator
+    JOIN movie_stars a
+    ON best_collaborator.person1_id = a.id
+    JOIN movie_stars b
+    ON best_collaborator.person2_id = b.id;
+
+3. (self-join) This code created a table showing each movies star in my "movie_stars" table and how many films they were in as their main role.    
+SELECT movie_stars.name, career_details.number_of_film     FROM movie_stars
+    JOIN career_details
+    ON movie_stars.id = career_details.person_id;
+
+4. Here I put the movie stars in descending order by their age.
+SELECT name, age FROM movie_stars
+    ORDER BY age DESC
