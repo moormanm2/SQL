@@ -403,4 +403,7 @@ FROM astronauts WHERE Space_Walks_hr > 0;
 
 7. This query shows how many astronauts went on a "Discovery" mission.
 SELECT COUNT(*) AS Astronauts_Discovery_Misson FROM astronauts WHERE Missions LIKE "%Discovery%";
+
+8. This query creates a table that shows the female astronauts that had Space Flights and how many.
+SELECT name, gender, Space_Flights FROM astronauts WHERE Space_Flights >0 AND gender = "Female";
  
