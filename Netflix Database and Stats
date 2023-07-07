@@ -1,0 +1,46 @@
+This project utilized data from the Netflix database stored at http://sqlfiddle.com/#!17/7dae0/5341
+
+1. This query counts how many files I have in my table "netflix_people".
+SELECT count(*) FROM "netflix_people"
+
+2. This query shows me 5 of the files from the table "netflix_people".
+SELECT * FROM "netflix_people" LIMIT 5
+
+3. This query shows me 5 of the files from the table "netflix_titles_info".
+SELECT * FROM "netflix_titles_info" LIMIT 5
+
+4. This query joins information from both tables to show me 5 titles and their director.
+SELECT "netflix_titles_info".title, "netflix_people".director FROM "netflix_people"
+JOIN "netflix_titles_info" 
+ON "netflix_people".show_id = "netflix_titles_info".show_id LIMIT 5
+
+5. This query shows how many movie titles are there in the database. (movies only, not tv shows) 
+SELECT COUNT(*) 
+FROM "netflix_titles_info"
+WHERE type = 'Movie'
+
+6. Both of these quieries show when the most recent batch of tv shows and/or movies was added to the database.
+SELECT title, date_added 
+From "netflix_titles_info"
+ORDER BY date_added DESC LIMIT 1
+
+SELECT MAX(date(date_added))
+FROM "netflix_titles_info"
+
+7. This lists all the movies and tv shows in alphabetical order. 
+SELECT title 
+FROM "netflix_titles_info"
+ORDER BY "netflix_titles_info".title
+
+8. In this query it shows who was the Director for the movie The Starling.
+SELECT titles.title, people.director
+FROM "netflix_titles_info" titles
+LEFT JOIN "netflix_people" people
+ON people.show_id = titles.show_id
+WHERE titles.title = 'The Starling'
+
+9. This query finds what movie is the oldest movie in the database and what year was it made.
+SELECT title, release_year 
+From "netflix_titles_info"
+WHERE type = 'Movie'
+ORDER BY "netflix_titles_info".release_year LIMIT 1
