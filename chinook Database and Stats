@@ -1,0 +1,208 @@
+
+
+#1. Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT FirstName, LastName, CustomerId, Country 
+FROM chinook.customers 
+WHERE country <> 'USA';
+
+
+#2. Show only the Customers from Brazil.
+
+SELECT FirstName, LastName, CustomerId, Country 
+FROM chinook.customers 
+WHERE country = 'Brazil';
+
+
+#3. Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT c.firstname, c. lastname, i.invoiceid, i.invoicedate, i.billingcountry
+FROM customers c
+JOIN invoices i
+ON c.customerid = i.customerid
+WHERE i.billingcountry = 'Brazil';
+
+
+#4. Show the Employees who are Sales Agents.
+
+SELECT *
+FROM employees
+WHERE title = 'Sales Support Agent';
+
+
+#5. Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT DISTINCT billingcountry 
+FROM invoices;
+
+
+#6. Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agents full name.
+
+SELECT i.invoiceid, c.supportrepid, e.firstname, e.lastname
+FROM invoices i
+JOIN customers c
+ON i.customerid = c.customerid
+JOIN employees e
+ON c.supportrepid = e.employeeid;
+
+
+#7. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT i.total AS Invoice_total, c.firstname AS Customer_First_Name, c.lastname  AS Customer_Last_Name, c.country, e.lastname AS Employee_First_Name, e.firstname AS Employee_Last_Name
+FROM invoices i
+JOIN customers c
+ON i.customerid = c.customerid
+JOIN employees e
+ON c.supportrepid = e.employeeid;
+
+
+#8. How many Invoices were there in 2009?
+
+SELECT COUNT(*)
+FROM invoices
+WHERE invoicedate LIKE '%2009%';
+
+
+#9. What are the total sales for 2009?
+
+SELECT SUM(total) AS total_sales_2009
+FROM invoices
+WHERE invoicedate LIKE '%2009%';
+
+
+#10. Write a query that includes the purchased track name with each invoice ID.
+
+SELECT t.name, i.invoiceid
+FROM tracks t
+JOIN invoice_items i
+ON t.trackid = i.trackid;
+
+
+#11. Write a query that includes the purchased track name AND artist name with each invoice ID.
+
+SELECT t.name AS Track_name, i.invoiceid, a.name AS Artist
+FROM tracks t
+JOIN invoice_items i
+ON t.trackid = i.trackid
+JOIN albums alb
+ON t.albumid = alb.albumid
+JOIN artists a
+ON alb.artistid = a. artistid;
+
+
+#12. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT t.name AS Track_name, alb.title AS Album_name, mt.name AS Media_type, g.name AS Genre
+FROM tracks t
+JOIN albums alb
+ON t.albumid = alb.albumid
+JOIN genres g
+ON t.genreid = g.genreid
+JOIN media_types mt
+ON t.mediatypeid = mt.mediatypeid;
+
+
+#13. Show the total sales made by each sales agent.
+
+SELECT e.lastname AS Employee_First_Name, e.firstname AS Employee_Last_Name, ROUND(SUM(i.total), 2) AS Total_sales
+FROM invoices i
+JOIN customers c
+ON i.customerid = c.customerid
+JOIN employees e
+ON c.supportrepid = e.employeeid
+WHERE e.Title = 'Sales Support Agent'
+GROUP BY c.supportrepid;
+
+
+
+#14. Which sales agent made the most dollars in sales in 2009?
+
+SELECT e.lastname AS Employee_First_Name, e.firstname AS Employee_Last_Name, ROUND(SUM(i.total), 2) AS Total_sales
+FROM invoices i
+JOIN customers c
+ON i.customerid = c.customerid
+JOIN employees e
+ON c.supportrepid = e.employeeid
+GROUP BY c.supportrepid
+WHERE e.title = 'Sales Support Agent'
+AND i.invoicedate LIKE '%2009%'
+ORDER BY Total_Sales DESC
+LIMIT 1;
+
+
+#15. What artists have more than 1 album in the database?
+
+SELECT COUNT(alb.albumid) AS number_of_albums, art.name
+FROM artists art
+JOIN albums alb
+ON art.artistid = alb.artistid
+GROUP BY alb.artistid
+HAVING number_of_albums > 1;
+
+
+#16. What is the most common media type?
+
+SELECT COUNT(t.mediatypeid) AS number_of_tracks, mt.name
+FROM media_types mt
+JOIN tracks t
+ON mt.mediatypeid = t.mediatypeid
+GROUP BY t.mediatypeid
+ORDER BY number_of_tracks DESC
+LIMIT 1;
+
+
+#17. List the top 5 tracks sold and how many times it was sold.
+
+SELECT COUNT(i.invoiceid) AS number_sold, t.name
+FROM invoices i
+JOIN invoice_items ii
+ON i.invoiceid = ii.invoiceid
+JOIN tracks t
+ON ii.trackid = t.trackid
+GROUP BY t.name
+ORDER BY number_sold DESC
+LIMIT 5;
+
+
+#18. Make a list of all the playlists.
+
+SELECT name 
+FROM playlists;
+
+
+#19. What is the most popular genre sold?
+
+SELECT g.name
+FROM invoices i
+JOIN invoice_items ii
+ON i.invoiceid = ii.invoiceid
+JOIN tracks t
+ON ii.trackid = t.trackid
+JOIN genres g
+ON t.genreid = g.genreid
+GROUP BY t.genreid
+ORDER BY COUNT(t.genreid) DESC
+LIMIT 1;
+
+
+#20. What artist has the most albums in the database and how many albums do they have?
+
+SELECT COUNT(alb.albumid) AS number_of_albums, art.name
+FROM artists art
+JOIN albums alb
+ON art.artistid = alb.artistid
+GROUP BY alb.artistid
+HAVING number_of_albums > 1
+ORDER BY number_of_albums DESC
+LIMIT 1;
+
+
+#21. What is the most popular genre stored in the database?
+
+SELECT g.name
+FROM genres g
+JOIN tracks t
+ON g.genreid = t.genreid
+GROUP BY t.genreid
+ORDER BY COUNT(t.genreid) DESC
+LIMIT 1;
