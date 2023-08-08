@@ -1,0 +1,151 @@
+-- Analyzed Apple Store Data for Stakeholders that are looking to design a new app. 
+
+/* Here is the link to my data. 
+https://drive.google.com/drive/folders/14O9xB8N1gXN_67ouphImQkvpzyitmTfR 
+*/
+
+CREATE TABLE applestore_description_combined AS
+SELECT * FROM appleStore_description1
+UNION ALL
+SELECT * FROM appleStore_description2
+UNION ALL
+SELECT * FROM appleStore_description3
+UNION ALL
+SELECT * FROM appleStore_description4;
+
+-- Check the number of unique apps in both tables AppleStore
+
+SELECT COUNT(DISTINCT id) AS UniqueAppIDs
+FROM AppleStore;
+
+SELECT COUNT(DISTINCT id) AS UniqueAppIDs
+FROM applestore_description_combined;
+
+-- Check for any missing values in kay fieldsAppleStore
+
+SELECT COUNT(*) AS MissingValues
+FROM AppleStore
+WHERE track_name IS NULL OR user_rating IS NULL OR prime_genre IS NULL;
+
+SELECT COUNT(*) AS MissingValues
+FROM applestore_description_combined
+WHERE app_desc IS NULL;
+
+-- Find out the number of apps per genre
+
+SELECT prime_genre, COUNT(*) AS NumApps
+FROM AppleStore
+GROUP BY prime_genre
+ORDER BY NumApps DESC;
+
+-- Get an overview of the apps' ratings
+
+SELECT min(user_rating) AS MinRating,
+	max(user_rating) AS MaxRating,
+    avg(user_rating) AS AvgRating
+FROM AppleStore;
+
+**DATA ANALYSIS**
+
+-- Determine whether paid apps have higher rating than free apps
+
+/* Stakeholders can analyze the relationship between app pricing and ratings. 
+If paid apps consistently have higher ratings, developers might consider 
+charging a fee for their apps to convey higher quality and attract more positive 
+reviews.
+*/
+
+SELECT CASE
+			WHEN price > 0 THEN 'Paid'
+            ELSE 'Free'
+         END AS App_Type,
+         avg(user_rating) as Avg_Rating
+FROm AppleStore
+GROUP BY App_Type;
+
+-- Check if apps with more supported langueges have higher ratings 
+
+/* This tells stakeholders if it is important to include more language 
+supports for better ratings.
+*/
+
+SELECT CASE
+			WHEN lang_num < 10 THEN '<10 languages'
+            WHEN lang_num BETWEEN 10 AND 30 THEN '10-30 languages'
+            ELSE '>30 languages'
+         END AS language_bucket,
+         avg(user_rating) AS Avg_Rating
+FROM AppleStore
+GROUP BY language_bucket
+ORDER BY Avg_Rating DESC;
+
+-- Check genres with low ratings 
+
+/* This will show our stakeholder that apps in these genres are getting 
+low ratings. This can be used to know what genres would be good to 
+build an app for because the others are lacking.
+*/
+
+SELECT prime_genre,
+		avg(user_rating) AS Avg_Rating
+FROM AppleStore
+GROUP BY prime_genre
+ORDER BY Avg_Rating ASC
+LIMIT 10;
+
+-- Check if there is correlation betwwen the length of the app description and the user rating 
+
+/* This information can be usfull for the stakeholder to see what description
+length they should be sure to include in their app to help with their rating.
+*/
+
+SELECT CASE 
+			WHEN length(b.app_desc) <500 THEN 'Short'
+            WHEN length(b.app_desc) BETWEEN 500 and 1000 THen 'Medium'
+            ELSE 'Long'
+         END AS desciption_lenght_bucket,
+         avg(a.user_rating) AS avg_rating
+FROM AppleStore as a 
+JOIN applestore_description_combined AS b 
+ON a.id = b.id
+GROUP BY desciption_lenght_bucket
+ORDER BY avg_rating DESC; 
+
+-- Check the top-rated apps for each genre 
+
+/* This could be a good insight for our stakeholder to check these apps 
+as the top performing ones. So, ideally these are the ones this person
+should try to emulate.
+*/
+
+SELECT prime_genre, track_name, user_rating
+FROM (
+  		SELECT prime_genre, track_name, user_rating,
+  		RANK() OVER(PARTITION BY prime_genre Order By user_rating DESC, rating_count_tot DESC) AS rank
+  		FROM AppleStore
+  	) AS a 
+ WHERE a.rank = 1;
+ 
+ /* Final Reccomandations
+ 1. Paid apps have better ratings.
+	- If they percieve the quality of their apps to be good then they should consider 
+    charging a certain amount for the app. 
+ 2. Apps supporting between 10 and 30 language have better ratings. 
+ 	- So, it is not really about the quantity of the languages that your app
+    supports, it is more about focusing on the right languages. 
+ 3. Finance and Book apps have low ratings. 
+ 	- This suggest that user needs are not being fully met and this can represent a 
+    market of opportunity. If you can create a quality app in these categories that
+    addresses user needs better than the current offering there is potential for high 
+    user ratings and market penetration.
+ 4. Apps with a longer description have better ratings. 
+ 	- Users likely appreciate having a clear understanding of the app's features and 
+    capabilities before the download. So, a detailed well crafted app description can 
+    set clear expectation and eventually increase the satisfaction of users. 
+ 5. A new app should aim for an average rating above 3.5. 
+ 	- On average all the apps have a rating of 3.5, so in order to stand out for the 
+    crowd their rating needs to be above that.
+ 6. Games and Entertainment categories have high competition. 
+ 	- These categories have high volume of apps suggesting the market may be saturated. 
+    However it also suggests a high user demand in these sectors.
+ */
